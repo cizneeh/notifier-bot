@@ -5,14 +5,21 @@ const client = new Discord.Client({
   intents: ['GUILDS', 'GUILD_MESSAGES'],
 })
 
-client.on('ready', () => {
-  console.log(`Succesfully logged in as ${client.user.tag}`)
-})
+let bot = {
+  client,
+  prefix: 'n.',
+  owners: ['299231674514931713'],
+}
 
-client.on('messageCreate', msg => {
-  if (msg.content === 'hi') {
-    msg.reply('Hello!')
-  }
-})
+client.commands = new Discord.Collection()
+client.events = new Discord.Collection()
+
+client.loadEvents = (bot, reload) => require('./handlers/events')(bot, reload)
+client.loadCommands = (bot, reload) => require('./handlers/commands')(bot, reload)
+
+client.loadEvents(bot, false)
+client.loadCommands(bot, false)
+
+module.exports = bot
 
 client.login(process.env.TOKEN)
